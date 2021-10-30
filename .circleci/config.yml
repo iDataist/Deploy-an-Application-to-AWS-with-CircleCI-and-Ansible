@@ -1,4 +1,14 @@
 version: 2.1
+executors:
+  node:
+    docker:
+      - image: circleci/node:13.8.0
+  python:
+    docker:
+      - image: python:3.9.0-alpine
+  aws:
+    docker:
+      - image: amazon/aws-cli
 orbs:
   slack: circleci/slack@4.4.4
 commands:
@@ -32,138 +42,136 @@ commands:
 
 jobs:
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - run:
           name: Build backend
+          working_directory: ./backend
           command: |
-            npm i --prefix backend
-            npm run build --prefix backend
+            npm install
+            npm run build
       - persist_to_workspace:
-          root: ~/
-          paths: project/backend/node_modules
+          root: .
+          paths: backend/node_modules
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - run:
           name: Build frontend
+          working_directory: ./frontend
           command: |
-            npm i --prefix frontend
-            npm run build --prefix frontend
+            npm install
+            npm run build
       - persist_to_workspace:
-          root: ~/
-          paths: project/frontend/node_modules
+          root: .
+          paths: frontend/node_modules
   test-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Test backend
+          working_directory: ./backend
           command: |
-            npm i --prefix backend
-            npm run test --prefix backend
+            npm run test
   test-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Test frontend
+          working_directory: ./frontend
           command: |
-            npm i --prefix frontend
-            npm run test --prefix frontend
+            npm run test
   scan-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Scan backend
+          working_directory: ./backend
           command: |
-            npm audit fix --audit-level=critical --force --prefix backend
-            npm audit --audit-level=critical --prefix backend
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
   scan-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    executor: node
     steps:
       - checkout
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Scan frontend
+          working_directory: ./frontend
           command: |
-            npm audit fix --audit-level=critical --force --prefix frontend
-            npm audit --audit-level=critical --prefix frontend
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
   deploy-infrastructure:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws
     steps:
       - checkout
       - run:
           name: Create backend infrastructure
+          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
+              --template-file backend.yml \
               --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region us-east-1 \
               --tags project=udapeople
       - run:
           name: Create frontend infrastructure
+          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
+              --template-file frontend.yml \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region us-east-1 \
               --tags project=udapeople
       - run:
           name: Get inventory
+          working_directory: ./.circleci/ansible
           command: |
-            echo "[all]" > .circleci/ansible/inventory.txt
+            echo "[all]" > inventory.txt
             aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --filters "Name=tag:Name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
+              --output text >> inventory.txt
+            cat inventory.txt
       - run: yum install -y tar gzip
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
       - destroy_environment
-
-
-
-#   configure-infrastructure:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # Your code here
-#             exit 1
-#       - run:
-#           name: Configure server
-#           command: |
-#             # Your code here
-#             exit 1
-#       # Here's where you will add some code to rollback on failure
+  configure_infrastructure:
+    executor: python
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["32:d6:44:79:f7:b6:4b:e6:24:1b:65:fc:16:65:79:b9"]
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          working_directory: ./.circleci/ansible
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Configure server
+          working_directory: ./.circleci/ansible
+          command: |
+             ansible-playbook -i inventory.txt configure-server.yml
 
 #   run-migrations:
 #     docker:
@@ -284,24 +292,20 @@ workflows:
       - build-backend
       - build-frontend
       - test-backend:
-          requires:
-            - build-backend
+          requires: [build-backend]
       - test-frontend:
-          requires:
-            - build-frontend
+          requires: [build-frontend]
       - scan-backend:
-          requires:
-            - build-backend
+          requires: [build-backend]
       - scan-frontend:
-          requires:
-            - build-frontend
+          requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
       #       branches:
       #         only: [test-feature-branch]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
