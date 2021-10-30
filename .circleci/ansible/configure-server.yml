@@ -1,9 +1,6 @@
 - name: Configuring EC2 instances
   hosts: all
   user: ubuntu
-  become: true
-  become_method: sudo
-  become_user: root
   gather_facts: false
   vars:
     - ansible_python_interpreter: /usr/bin/python3
@@ -21,4 +18,4 @@
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
   roles:
     - configure-server
-    - configure-prometheus-node-exporter
+    # - configure-prometheus-node-exporter
