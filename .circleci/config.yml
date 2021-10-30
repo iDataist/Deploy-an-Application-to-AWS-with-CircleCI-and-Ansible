@@ -42,7 +42,7 @@ jobs:
           name: Build back-end
           command: |
             npm i --prefix backend
-            npm run lint --prefix backend
+            npm run build --prefix backend
       - persist_to_workspace:
           root: ./
           paths: backend/node_modules
@@ -55,7 +55,7 @@ jobs:
           name: Build front-end
           command: |
             npm i --prefix frontend
-            npm run lint --prefix frontend
+            npm run build --prefix frontend
       - persist_to_workspace:
           root: ./
           paths: frontend/node_modules
