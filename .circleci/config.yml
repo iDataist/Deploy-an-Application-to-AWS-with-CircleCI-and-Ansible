@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build back-end
+          name: Build backend
           command: |
             npm i --prefix backend
             npm run build --prefix backend
@@ -52,7 +52,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build front-end
+          name: Build frontend
           command: |
             npm i --prefix frontend
             npm run build --prefix frontend
@@ -67,8 +67,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run: npm i --prefix backend
-      - run: npm run test --prefix backend
+      - run:
+          name: Test backend
+          command: |
+            npm i --prefix backend
+            npm run test --prefix backend
 
   test-frontend:
     docker:
@@ -77,10 +80,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run: npm i --prefix frontend
-      - run: npm run test --prefix frontend
-
-
+      - run:
+          name: Test frontend
+          command: |
+            npm i --prefix frontend
+            npm run test --prefix frontend
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -88,9 +92,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run: npm i --prefix backend
-      - run: npm audit --audit-level=critical --prefix backend
-
+      - run:
+          name: Scan backend
+          command: |
+            npm audit fix --audit-level=critical --force --prefix backend
+            npm audit --audit-level=critical --prefix backend
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -98,10 +104,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run: npm i --prefix frontend
-      - run: npm audit --audit-level=critical --prefix frontend
-
-
+      - run:
+          name: Scan frontend
+          command: |
+            npm audit fix --audit-level=critical --force --prefix frontend
+            npm audit --audit-level=critical --prefix frontend
 
 #   deploy-infrastructure:
 #     docker:
