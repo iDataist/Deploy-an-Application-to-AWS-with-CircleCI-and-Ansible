@@ -13,7 +13,7 @@ export enum Translation {
   EDIT_EMPLOYEE_FIELD_ERROR = 'There was an error updating the field.',
   GENERIC_ERROR = 'Oops!, something went wrong.',
   BAD_REQUEST_ERROR = 'Oops!, something went wrong, please check your data.',
-  SERVER_ERROR = 'Oops!, something went wrong, we could not establish a connection to the server.'
-};
+  SERVER_ERROR = 'Oops!, something went wrong, we could not establish a connection to the server.',
+}
 
 export default Translation;

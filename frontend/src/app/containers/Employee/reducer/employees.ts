@@ -62,7 +62,7 @@ export const employeeReducer = handleActions<EmployeeState, EmployeePayloadType>
       return {
         ...state,
         isFetching: false,
-        errorMessage: (action.payload as Error).message
+        errorMessage: (action.payload as Error).message,
       };
     },
   },

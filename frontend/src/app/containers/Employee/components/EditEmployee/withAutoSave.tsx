@@ -11,8 +11,8 @@ export const withAutoSave = (Component: React.ComponentClass<any>) => {
       this.timerDictionary.set(inputName, window.setTimeout(callback, this.coolDown));
     }
 
-    render () {
-      return <Component {...this.props} debounce={this.debounce} />
+    render() {
+      return <Component {...this.props} debounce={this.debounce} />;
     }
-  }
+  };
 };

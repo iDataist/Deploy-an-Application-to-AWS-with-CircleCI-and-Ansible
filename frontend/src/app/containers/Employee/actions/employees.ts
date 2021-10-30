@@ -1,10 +1,10 @@
 import { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
-import { 
-  EmployeeModel, 
-  EmployeeUpdateStringFieldModel, 
-  EmployeeUpdateNumberFieldModel, 
-  EmployeeUpdateDateFieldModel, 
+import {
+  EmployeeModel,
+  EmployeeUpdateStringFieldModel,
+  EmployeeUpdateNumberFieldModel,
+  EmployeeUpdateDateFieldModel,
   EmployeeUpdateNamesModel,
   EmployeeUpdateAddressModel,
 } from '../models/EmployeeModel';
@@ -72,7 +72,7 @@ export namespace EmployeeActions {
   );
 
   export const updateEmployeeDisplayNameFailure = createAction<Error>(
-    Type.UPDATE_EMPLOYEE_DISPLAY_NAME_FAILURE
+    Type.UPDATE_EMPLOYEE_DISPLAY_NAME_FAILURE,
   );
 
   // Async Actions are handled by thunk middleware
@@ -135,7 +135,7 @@ export namespace EmployeeActions {
   export const updateStringField = (
     employeeId: string,
     payload: EmployeeUpdateStringFieldModel,
-    fieldName: string
+    fieldName: string,
   ) => async () => {
     try {
       await new EmployeesService().updateField(employeeId, payload, fieldName);
@@ -144,26 +144,26 @@ export namespace EmployeeActions {
       console.error(error);
       showErrorNotification(text.EDIT_EMPLOYEE_FIELD_ERROR);
     }
-  }
+  };
 
- export const updateNumberField = (
+  export const updateNumberField = (
   employeeId: string,
   payload: EmployeeUpdateNumberFieldModel,
-  fieldName: string
+  fieldName: string,
 ) => async () => {
   try {
     await new EmployeesService().updateField(employeeId, payload, fieldName);
-    showSuccessNotification(text.EDIT_EMPLOYEE_FIELD_SUCCESS)
+    showSuccessNotification(text.EDIT_EMPLOYEE_FIELD_SUCCESS);
   } catch (error) {
     console.error(error);
     showErrorNotification(text.EDIT_EMPLOYEE_FIELD_ERROR);
   }
-}
+};
 
   export const updateDateField = (
     employeeId: string,
     payload: EmployeeUpdateDateFieldModel,
-    fieldName: string
+    fieldName: string,
   ) => async () => {
     try {
       await new EmployeesService().updateField(employeeId, payload, fieldName);
@@ -172,11 +172,11 @@ export namespace EmployeeActions {
       console.error(error);
       showErrorNotification(text.EDIT_EMPLOYEE_FIELD_ERROR);
     }
-  }
+  };
 
   export const updateNames = (
     employeeId: string,
-    payload: EmployeeUpdateNamesModel
+    payload: EmployeeUpdateNamesModel,
   ) => async () => {
     try {
       await new EmployeesService().updateNames(employeeId, payload);
@@ -185,11 +185,11 @@ export namespace EmployeeActions {
       console.error(error);
       showErrorNotification(text.EDIT_EMPLOYEE_FIELD_ERROR);
     }
-  }
+  };
 
   export const updateAddress = (
     employeeId: string,
-    payload: EmployeeUpdateAddressModel
+    payload: EmployeeUpdateAddressModel,
   ) => async () => {
     try {
       await new EmployeesService().updateAddress(employeeId, payload);
@@ -198,7 +198,7 @@ export namespace EmployeeActions {
       console.error(error);
       showErrorNotification(text.EDIT_EMPLOYEE_FIELD_ERROR);
     }
-  }
+  };
 }
 
 export type EmployeeActions = Omit<typeof EmployeeActions, 'Type'>;

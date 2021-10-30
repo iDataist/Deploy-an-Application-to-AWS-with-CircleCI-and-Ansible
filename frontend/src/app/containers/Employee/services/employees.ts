@@ -1,16 +1,16 @@
 import { HttpService } from '../../../services/httpService';
-import { EmployeeModel, 
-  EmployeeUpdateStringFieldModel, 
+import { EmployeeModel,
+  EmployeeUpdateStringFieldModel,
   EmployeeUpdateDateFieldModel,
-  EmployeeUpdateNamesModel, 
-  EmployeeUpdateAddressModel, 
-  EmployeeUpdateNumberFieldModel
+  EmployeeUpdateNamesModel,
+  EmployeeUpdateAddressModel,
+  EmployeeUpdateNumberFieldModel,
 } from '../models/EmployeeModel';
 
 type employeeUpdateTypes = EmployeeUpdateStringFieldModel
   | EmployeeUpdateDateFieldModel
   | EmployeeUpdateNumberFieldModel;
-  
+
 export class EmployeesService {
   private readonly employeesUrl: string;
   private readonly httpService: HttpService;
@@ -35,12 +35,12 @@ export class EmployeesService {
     return this.httpService.post(this.employeesUrl, employee);
   }
 
-  updateField = (id: string, payload:employeeUpdateTypes , 
-    fieldName: string) => {
-    let payloadReady:{[key:string]:string|Date|number} = {};
+  updateField = (id: string, payload: employeeUpdateTypes ,
+                 fieldName: string) => {
+    const payloadReady: {[key: string]: string|Date|number} = {};
     payloadReady[fieldName] = payload.value;
     return this.httpService.put(`${this.employeesUrl}/${id}/${fieldName}`, payloadReady);
-  } 
+  }
 
   updateAddress = (id: string, payload: EmployeeUpdateAddressModel) => {
     return this.httpService.put(`${this.employeesUrl}/${id}/address`, payload);

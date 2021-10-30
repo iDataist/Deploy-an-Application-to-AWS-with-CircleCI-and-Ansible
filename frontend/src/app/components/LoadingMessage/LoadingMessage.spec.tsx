@@ -9,6 +9,7 @@ describe('<LoadingMessage>', () => {
         const message = 'Hello!';
         const wrapper = shallow(<LoadingMessage message={message} />);
         expect(wrapper.contains(<span>{message}</span>)).toBeTruthy();
+      });
     });
   });
 });
