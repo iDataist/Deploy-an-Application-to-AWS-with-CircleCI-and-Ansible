@@ -269,10 +269,10 @@ workflows:
     jobs:
       - build-backend
       - build-frontend
-      - test-backend
+      - test-backend:
           requires:
             - build-backend
-      - test-frontend
+      - test-frontend:
           requires:
             - build-frontend
       # - scan-backend:
