@@ -13,7 +13,7 @@ export class EmployeeDisplayNameUpdater extends BaseCommandHandler<UpdateEmploye
   async handle(command: UpdateEmployeeDisplayName): Promise<void> {
     const {
       employeeId,
-      displayName
+      displayName,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);

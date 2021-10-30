@@ -14,13 +14,13 @@ export class EmployeeRepository extends BaseRepository<number, Employee> {
   ) {
     super(manager.getRepository(Employee), eventDispatcher);
   }
-  
-  async findByNames(firstName, middleName, lastName, secondLastName) : Promise<Employee>{
-    const emp = await this.repository.createQueryBuilder("employee")
-        .where("employee.firstName = :firstName AND employee.middleName = :middleName " +
-            "AND employee.lastName = :lastName AND employee.secondLastName = :secondLastName",
-            {firstName:firstName,middleName:middleName,lastName:lastName,secondLastName:secondLastName})
-        .getOne();    
+
+  async findByNames(firstName, middleName, lastName, secondLastName): Promise<Employee>{
+    const emp = await this.repository.createQueryBuilder('employee')
+        .where('employee.firstName = :firstName AND employee.middleName = :middleName ' +
+            'AND employee.lastName = :lastName AND employee.secondLastName = :secondLastName',
+            {firstName, middleName, lastName, secondLastName})
+        .getOne();
     return emp;
   }
 }

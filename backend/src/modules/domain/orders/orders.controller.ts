@@ -4,7 +4,7 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { CreateOrder } from './commands/createOrder';
 import { OrderRepository } from './repositories/orderRepository';
 import { PaginatedOrderQuery } from './requests/PaginatedOrderQuery';
-import { PassportModule} from "@nestjs/passport";
+import { PassportModule} from '@nestjs/passport';
 // import { ProductRepository } from './repositories/productRepository';
 // import { PaginatedProductQuery } from './requests/paginatedProductQuery';
 import { AuthGuard } from '@nestjs/passport';

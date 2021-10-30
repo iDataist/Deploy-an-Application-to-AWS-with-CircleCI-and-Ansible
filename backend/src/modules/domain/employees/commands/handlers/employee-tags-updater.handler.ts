@@ -13,7 +13,7 @@ export class EmployeeTagsUpdater extends BaseCommandHandler<UpdateEmployeeTags, 
   async handle(command: UpdateEmployeeTags): Promise<void> {
     const {
       employeeId,
-      tags
+      tags,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);

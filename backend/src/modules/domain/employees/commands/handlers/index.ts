@@ -6,13 +6,13 @@ import { EmployeeDeactivator } from './employee-deactivator.handler';
 import { EmployeeActivator } from './employee-activator.handler';
 import {EmployeeDisplayNameUpdater} from './employee-display-name-updater.handler';
 import {EmployeeTagsUpdater} from './employee-tags-updater.handler';
-import { EmployeePhoneNumberUpdater } from "./employee-phone-number-updater.handler";
-import { EmployeePersonalEmailUpdater } from "./employee-personal-email-updater.handler";
-import { EmployeeCompanyEmailUpdater } from "./employee-company-email-updater.handler";
-import { EmployeeSalaryUpdater } from "./employee-salary-updater.handler";
+import { EmployeePhoneNumberUpdater } from './employee-phone-number-updater.handler';
+import { EmployeePersonalEmailUpdater } from './employee-personal-email-updater.handler';
+import { EmployeeCompanyEmailUpdater } from './employee-company-email-updater.handler';
+import { EmployeeSalaryUpdater } from './employee-salary-updater.handler';
 import {EmployeeSalaryTypeUpdater} from './employee-salary-type-updater.handler';
-import { EmployeeEffectiveDateUpdater } from "./employee-effective-date-updater.handler";
-import { EmployeeBirthDateUpdater } from "./employee-birthdate-updater.handler";
+import { EmployeeEffectiveDateUpdater } from './employee-effective-date-updater.handler';
+import { EmployeeBirthDateUpdater } from './employee-birthdate-updater.handler';
 
 export const CommandHandlers = [
   EmployeeCreator,
@@ -29,5 +29,5 @@ export const CommandHandlers = [
   EmployeeSalaryUpdater,
   EmployeeSalaryTypeUpdater,
   EmployeeEffectiveDateUpdater,
-  EmployeeBirthDateUpdater
+  EmployeeBirthDateUpdater,
 ];

@@ -14,7 +14,7 @@ export class EmployeeEffectiveDateUpdater extends BaseCommandHandler<UpdateEmplo
   async handle(command: UpdateEmployeeEffectiveDate): Promise<void> {
     const {
       employeeId,
-      effectiveDate
+      effectiveDate,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);

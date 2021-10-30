@@ -19,5 +19,5 @@ export interface UpdateEmployeeRequest {
   salary: number;
   effectiveDate: string;
   salaryType: string;
-  isActive: boolean
+  isActive: boolean;
 }

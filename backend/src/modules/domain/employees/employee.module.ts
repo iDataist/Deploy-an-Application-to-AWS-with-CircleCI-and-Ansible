@@ -11,7 +11,7 @@ import { EmployeeRepository } from './repositories/employees.repository';
 import { EmployeeController } from './employee.controller';
 import { Employee } from './entities/employee.entity';
 import { CommandValidators } from './commands/validators';
-import {PassportModule} from "@nestjs/passport";
+import {PassportModule} from '@nestjs/passport';
 
 @Module({
   imports: [CommonModule, TypeOrmModule.forFeature([Employee]), AuthModule, PassportModule.register({ defaultStrategy: 'jwt' })],

@@ -14,7 +14,7 @@ export class EmployeeSalaryTypeUpdater extends BaseCommandHandler<UpdateEmployee
   async handle(command: UpdateEmployeeSalaryType): Promise<void> {
     const {
       employeeId,
-      salaryType
+      salaryType,
     } = command;
     const salaryTypeKey = Object.keys(SalaryType).find(
         key => SalaryType[key] === salaryType,

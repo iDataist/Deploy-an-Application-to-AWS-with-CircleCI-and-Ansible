@@ -7,7 +7,6 @@ export class UpdateEmployeeAddress implements ICommand {
   region: string;
   city: string;
 
-
   constructor(employeeId: number, address: string, country: string, region: string, city: string ) {
     this.employeeId = employeeId;
     this.address = address;

@@ -18,7 +18,7 @@ export class EmployeeNameUpdater extends BaseCommandHandler<UpdateEmployeeName, 
       firstName,
       middleName,
       lastName,
-      secondLastName
+      secondLastName,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);
