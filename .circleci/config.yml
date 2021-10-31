@@ -35,17 +35,41 @@ commands:
             then
               npm run migrations:revert
             fi
-
 jobs:
-  build-backend:
+  install-backend-dependencies:
     executor: node
     steps:
       - checkout
       - run:
-          name: Build backend
+          name: Install backend dependencies
           working_directory: ./backend
           command: |
             npm install
+      - persist_to_workspace:
+          root: .
+          paths: backend/node_modules
+  install-frontend-dependencies:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: Install frontend dependencies
+          working_directory: ./frontend
+          command: |
+            npm install
+      - persist_to_workspace:
+          root: .
+          paths: frontend/node_modules
+  build-backend:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build backend
+          working_directory: ./backend
+          command: |
             npm run build
       - persist_to_workspace:
           root: .
@@ -54,11 +78,12 @@ jobs:
     executor: node
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Build frontend
           working_directory: ./frontend
           command: |
-            npm install
             npm run build
       - persist_to_workspace:
           root: .
