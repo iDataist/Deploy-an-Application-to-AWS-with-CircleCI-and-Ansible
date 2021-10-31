@@ -113,6 +113,7 @@ jobs:
       - run:
           name: Scan backend
           command: |
+            npm audit fix --audit-level=critical --force --prefix backend
             npm audit --audit-level=critical --prefix backend
   scan-frontend:
     executor: node
@@ -123,6 +124,7 @@ jobs:
       - run:
           name: Scan frontend
           command: |
+            npm audit fix --audit-level=critical --force --prefix frontend
             npm audit --audit-level=critical --prefix frontend
   deploy-infrastructure:
     executor: aws
@@ -199,26 +201,25 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request PUT --data "success" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - destroy-environment
-  # deploy-backend:
-  #   executor: python
-  #   steps:
-  #     -checkout
-  #     - add_ssh_keys:
-  #         fingerprints: ["32:d6:44:79:f7:b6:4b:e6:24:1b:65:fc:16:65:79:b9"]
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           apk add --update ansible
-  #           ansible --version
-  #     - run:
-  #         name: Deploy backend
-  #         working_directory: ./.circleci/ansible
-  #         command: |
-  #            ansible-playbook -i inventory.txt deploy-backend.yml
-  #     - destroy-environment
-  #     - revert-migrations
+  deploy-backend:
+    executor: python
+    steps:
+      -checkout
+      - add_ssh_keys:
+          fingerprints: ["32:d6:44:79:f7:b6:4b:e6:24:1b:65:fc:16:65:79:b9"]
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Deploy backend
+          command: |
+             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+      - destroy-environment
+      - revert-migrations
   # deploy-frontend:
   #   executor: aws
   #   steps:
@@ -328,8 +329,8 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - smoke-test:
