@@ -181,8 +181,9 @@ jobs:
             ansible --version
       - run:
           name: Configure server
+          working_directory: ./.circleci/ansible
           command: |
-             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+             ansible-playbook -i inventory.txt configure-server.yml
   run-migrations:
     executor: node
     steps:
@@ -305,32 +306,31 @@ jobs:
 workflows:
   default:
     jobs:
-      # - install-backend-dependencies
-      # - install-frontend-dependencies
-      # - build-backend:
-      #     requires: [install-backend-dependencies]
-      # - build-frontend:
-      #     requires: [install-frontend-dependencies]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-          # requires: [deploy-infrastructure]
-      - configure-infrastructure
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - install-backend-dependencies
+      - install-frontend-dependencies
+      - build-backend:
+          requires: [install-backend-dependencies]
+      - build-frontend:
+          requires: [install-frontend-dependencies]
+      - test-backend:
+          requires: [build-backend]
+      - test-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-backend:
+          requires: [run-migrations]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - smoke-test:
