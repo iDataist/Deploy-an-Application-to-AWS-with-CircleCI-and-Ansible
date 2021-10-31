@@ -31,5 +31,5 @@ Resources:
       KeyName: ec2
       ImageId: ami-09e67e426f25ce0d7
       Tags:
-        - Key: Name
+        - Key: udapeople
           Value: !Sub backend-${ID}
