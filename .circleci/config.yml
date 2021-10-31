@@ -35,7 +35,6 @@ commands:
             then
               npm run migrations:revert
             fi
-          when: << parameters.when >>
 
 jobs:
   build-backend:
