@@ -204,7 +204,7 @@ jobs:
   deploy-backend:
     executor: python
     steps:
-      -checkout
+      - checkout
       - add_ssh_keys:
           fingerprints: ["32:d6:44:79:f7:b6:4b:e6:24:1b:65:fc:16:65:79:b9"]
       - attach_workspace:
