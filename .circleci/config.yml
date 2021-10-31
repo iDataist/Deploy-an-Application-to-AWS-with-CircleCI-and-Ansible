@@ -323,8 +323,12 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-backend
-      - build-frontend
+      - install-backend-dependencies
+      - install-frontend-dependencies
+      - build-backend:
+          requires: [install-backend-dependencies]
+      - build-frontend:
+          requires: [install-frontend-dependencies]
       - test-backend:
           requires: [build-backend]
       - test-frontend:
