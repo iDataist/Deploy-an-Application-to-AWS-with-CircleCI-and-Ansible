@@ -146,8 +146,7 @@ jobs:
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo "[all]" > .circleci/ansible/inventory.txt
-            echo $BACKEND_IP > .circleci/ansible/inventory.txt
+            echo [all]$'\n'$BACKEND_IP > .circleci/ansible/inventory.txt
             echo http://$BACKEND_IP:3030 > .circleci/ansible/backend-url.txt
             cat .circleci/ansible/inventory.txt
             cat .circleci/ansible/backend-url.txt
