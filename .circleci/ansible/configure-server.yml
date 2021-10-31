@@ -1,12 +1,21 @@
+---
+
 - name: Configuring EC2 instances
-  hosts: all
+  hosts: ubuntu
   user: ubuntu
+  become: true
+  become_method: sudo
+  become_user: root
   gather_facts: false
   vars:
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
   environment:
+    - AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID')}}"
+    - AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY')}}"
+    - AWS_SESSION_TOKEN: "{{ lookup('env', 'AWS_SESSION_TOKEN')}}"
+    - AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION')}}"
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
     - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
     - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
