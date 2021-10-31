@@ -42,9 +42,8 @@ jobs:
       - checkout
       - run:
           name: Install backend dependencies
-          working_directory: ./backend
           command: |
-            npm install
+            npm install --prefix backend
       - persist_to_workspace:
           root: .
           paths: backend/node_modules
@@ -54,9 +53,8 @@ jobs:
       - checkout
       - run:
           name: Install frontend dependencies
-          working_directory: ./frontend
           command: |
-            npm install
+            npm install --prefix frontend
       - persist_to_workspace:
           root: .
           paths: frontend/node_modules
@@ -68,9 +66,8 @@ jobs:
           at: .
       - run:
           name: Build backend
-          working_directory: ./backend
           command: |
-            npm run build
+            npm run build --prefix backend
       - persist_to_workspace:
           root: .
           paths: backend/dist
@@ -82,9 +79,8 @@ jobs:
           at: .
       - run:
           name: Build frontend
-          working_directory: ./frontend
           command: |
-            npm run build
+            npm run build --prefix frontend
       - persist_to_workspace:
           root: .
           paths: frontend/dist
@@ -96,9 +92,8 @@ jobs:
           at: .
       - run:
           name: Test backend
-          working_directory: ./backend
           command: |
-            npm run test
+            npm run test --prefix backend
   test-frontend:
     executor: node
     steps:
@@ -107,9 +102,8 @@ jobs:
           at: .
       - run:
           name: Test frontend
-          working_directory: ./frontend
           command: |
-            npm run test
+            npm run test --prefix frontend
   scan-backend:
     executor: node
     steps:
@@ -118,10 +112,8 @@ jobs:
           at: .
       - run:
           name: Scan backend
-          working_directory: ./backend
           command: |
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+            npm audit --audit-level=critical --prefix backend
   scan-frontend:
     executor: node
     steps:
@@ -130,43 +122,38 @@ jobs:
           at: .
       - run:
           name: Scan frontend
-          working_directory: ./frontend
           command: |
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+            npm audit --audit-level=critical --prefix frontend
   deploy-infrastructure:
     executor: aws
     steps:
       - checkout
       - run:
           name: Create backend infrastructure
-          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-              --template-file backend.yml \
+              --template-file .circleci/files/backend.yml \
               --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region us-east-1 \
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Save backend ip and url
-          working_directory: ./.circleci/ansible
           command: |
-            echo "[all]" > inventory.txt
+            echo "[all]" > .circleci/ansible/inventory.txt
             BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo $BACKEND_IP > inventory.txt
-            cat inventory.txt
-            curl -H "Content-Type: text/plain" -H "token: 1bb5128b-9b42-475e-9848-eba8560de7f4" --request PUT --data "http://$BACKEND_IP:3030" https://api.memstash.io/values/BACKEND_URL
-            curl -H "Content-Type: text/plain" -H "token: 1bb5128b-9b42-475e-9848-eba8560de7f4" --request GET https://api.memstash.io/values/BACKEND_URL
-      - run:
+            echo $BACKEND_IP > .circleci/ansible/inventory.txt
+            echo http://$BACKEND_IP:3030 > .circleci/ansible/backend-url.txt
+            cat .circleci/ansible/inventory.txt
+            cat .circleci/ansible/backend-url.txt
+     - run:
           name: Create frontend infrastructure
-          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-              --template-file frontend.yml \
+              --template-file .circleci/files/frontend.yml \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region us-east-1 \
@@ -176,6 +163,7 @@ jobs:
           root: .
           paths:
             - .circleci/ansible/inventory.txt
+            - .circleci/ansible/backend-url.txt
       - destroy-environment
   configure-infrastructure:
     executor: python
@@ -187,32 +175,27 @@ jobs:
           at: .
       - run:
           name: Install dependencies
-          working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
             ansible --version
       - run:
           name: Configure server
-          working_directory: ./.circleci/ansible
           command: |
-             ansible-playbook -i inventory.txt configure-server.yml
+             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
   run-migrations:
     executor: node
     steps:
       - checkout
       - run:
           name: Run migrations
-          working_directory: ./backend
           command: |
-            npm run migrations > migrations_dump.txt
+            npm run migrations --prefix backend > backend/migrations_dump.txt
       - run:
           name: Send migration results to memstash
-          working_directory: ./backend
           command: |
-            if grep -q "has been executed successfully." migrations_dump.txt
+            if grep -q "has been executed successfully." backend/migrations_dump.txt
             then
-              echo "Database migration was successful"
-              echo "WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}"
+              echo "Database migration was successful for ${CIRCLE_WORKFLOW_ID:0:7}"
               curl -H "Content-Type: text/plain" -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request PUT --data "success" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - destroy-environment
@@ -226,7 +209,6 @@ jobs:
   #         at: .
   #     - run:
   #         name: Install dependencies
-  #         working_directory: ./.circleci/ansible
   #         command: |
   #           apk add --update ansible
   #           ansible --version
