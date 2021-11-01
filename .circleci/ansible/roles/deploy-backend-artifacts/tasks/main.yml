@@ -1,0 +1,35 @@
+---
+  - name: "show environment"
+    shell: env
+  - name: "synchronize backend installations"
+    become: yes
+    synchronize:
+      src: ../../backend/node_modules
+      dest: /home/ubuntu/app
+      recursive: true
+  - name: "synchronize backend binaries"
+    become: yes
+    synchronize:
+      src: ../../backend/dist
+      dest: /home/ubuntu/app
+      recursive: true
+  - name: "delete anything that is running"
+    become: true
+    command: pm2 delete all
+    ignore_errors: true
+  - name: "start server"
+    become: true
+    command: pm2 start -f ./main.js
+    args:
+      chdir: /home/ubuntu/app/dist
+    environment:
+      - ENVIRONMENT: dev
+      - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
+      - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
+      - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
+      - TYPEORM_PORT: 5432
+      - TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
+      - TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD')}}"
+      - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
+      - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
+      - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
