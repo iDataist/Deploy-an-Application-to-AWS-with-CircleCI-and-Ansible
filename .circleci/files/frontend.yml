@@ -15,6 +15,9 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
+      Tags:
+        - Key: project
+          Value: !Sub udapeople-frontend-${ID}
 
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
