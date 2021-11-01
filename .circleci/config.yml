@@ -408,7 +408,7 @@ workflows:
           requires: [run-database-migrations]
       - smoke-test:
           requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
-      - cloudfront-update:
+      - update-cloudfront-infrastructure:
           requires: [smoke-test]
       - cleanup:
-          requires: [cloudfront-update]
+          requires: [update-cloudfront-infrastructure]
