@@ -42,8 +42,9 @@ jobs:
       - checkout
       - run:
           name: Install backend dependencies
+          working_directory: ./backend
           command: |
-            npm install --prefix backend
+            npm install
       - persist_to_workspace:
           root: .
           paths: backend/node_modules
@@ -53,8 +54,9 @@ jobs:
       - checkout
       - run:
           name: Install frontend dependencies
+          working_directory: ./frontend
           command: |
-            npm install --prefix frontend
+            npm install
       - persist_to_workspace:
           root: .
           paths: frontend/node_modules
@@ -66,8 +68,9 @@ jobs:
           at: .
       - run:
           name: Build backend
+          working_directory: ./backend
           command: |
-            npm run build --prefix backend
+            npm run build
       - persist_to_workspace:
           root: .
           paths: backend/dist
@@ -79,8 +82,9 @@ jobs:
           at: .
       - run:
           name: Build frontend
+          working_directory: ./frontend
           command: |
-            npm run build --prefix frontend
+            npm run build
       - persist_to_workspace:
           root: .
           paths: frontend/dist
@@ -92,8 +96,9 @@ jobs:
           at: .
       - run:
           name: Test backend
+          working_directory: ./backend
           command: |
-            npm run test --prefix backend
+            npm run test
   test-frontend:
     executor: node
     steps:
@@ -102,8 +107,9 @@ jobs:
           at: .
       - run:
           name: Test frontend
+          working_directory: ./frontend
           command: |
-            npm run test --prefix frontend
+            npm run test
   scan-backend:
     executor: node
     steps:
@@ -112,9 +118,10 @@ jobs:
           at: .
       - run:
           name: Scan backend
+          working_directory: ./backend
           command: |
-            npm audit fix --audit-level=critical --force --prefix backend
-            npm audit --audit-level=critical --prefix backend
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
   scan-frontend:
     executor: node
     steps:
@@ -123,38 +130,42 @@ jobs:
           at: .
       - run:
           name: Scan frontend
+          working_directory: ./frontend
           command: |
-            npm audit fix --audit-level=critical --force --prefix frontend
-            npm audit --audit-level=critical --prefix frontend
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
   deploy-infrastructure:
     executor: aws
     steps:
       - checkout
       - run:
           name: Create backend infrastructure
+          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
+              --template-file backend.yml \
               --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region us-east-1 \
               --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Save backend ip and url
+          working_directory: ./.circleci/ansible
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo [ubuntu]$'\n'$BACKEND_IP > .circleci/ansible/inventory.txt
-            echo http://$BACKEND_IP:3030 > .circleci/ansible/backend-url.txt
-            cat .circleci/ansible/inventory.txt
-            cat .circleci/ansible/backend-url.txt
+            echo [ubuntu]$'\n'$BACKEND_IP > inventory.txt
+            echo http://$BACKEND_IP:3030 > backend-url.txt
+            cat inventory.txt
+            cat backend-url.txt
       - run:
           name: Create frontend infrastructure
+          working_directory: ./.circleci/files
           command: |
             aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
+              --template-file frontend.yml \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --region us-east-1 \
@@ -192,18 +203,20 @@ jobs:
           at: .
       - run:
           name: Run database migrations
+          working_directory: ./backend
           command: |
-            npm run migrations --prefix backend > backend/migrations_dump.txt
+            npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to memstash
+          working_directory: ./backend
           command: |
-            if grep -q "has been executed successfully." backend/migrations_dump.txt
+            if grep -q "has been executed successfully." migrations_dump.txt
             then
               echo "Database migration was successful for ${CIRCLE_WORKFLOW_ID:0:7}"
               curl -H "Content-Type: text/plain" -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request PUT --data "success" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - destroy-environment
-  deploy-backend-artifact:
+  deploy-backend-artifacts:
     executor: python
     steps:
       - checkout
@@ -222,10 +235,10 @@ jobs:
           name: Deploy backend artifact
           working_directory: ./.circleci/ansible
           command: |
-             ansible-playbook -i inventory.txt deploy-backend-artifact.yml
+             ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
       - destroy-environment
       - revert-migrations
-  deploy-frontend-artifact:
+  deploy-frontend-artifacts:
     executor: python
     steps:
       - checkout
@@ -306,7 +319,6 @@ jobs:
 #               # your code here
 #             fi
 
-
 workflows:
   default:
     jobs:
@@ -333,12 +345,12 @@ workflows:
           requires: [deploy-infrastructure]
       - run-database-migrations:
           requires: [configure-infrastructure]
-      - deploy-backend-artifact:
+      - deploy-backend-artifacts:
           requires: [run-database-migrations]
-      - deploy-frontend-artifact:
+      - deploy-frontend-artifacts:
           requires: [run-database-migrations]
       # - smoke-test:
-      #     requires: [deploy-backend-artifact, deploy-frontend-artifact]
+      #     requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
