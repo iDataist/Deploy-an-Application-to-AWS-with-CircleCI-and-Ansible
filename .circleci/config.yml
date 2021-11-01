@@ -355,7 +355,8 @@ jobs:
     executor: aws
     steps:
       - checkout
-      - run: Clean up old infrastructure
+      - run:
+          name: Clean up old infrastructure
           command: |
             WORKFLOW_ID=$(aws cloudformation list-exports \
               --query "Exports[?Name==\`WorkflowID\`].Value" \
