@@ -307,12 +307,13 @@ jobs:
             if
               curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
             then
-              exit 0
+              return 0
             else
-              exit 1
+              return 1
             fi
       - run:
           name: Frontend smoke test
+          when: on_fail
           command: |
             URL="http://udapeople-${RUN_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
             echo ${URL}
@@ -322,10 +323,10 @@ jobs:
             else
               return 1
             fi
-      - destroy-environment:
-          run_id: ${RUN_ID:0:7}
-      - revert-migrations:
-          run_id: ${RUN_ID:0:7}
+      # - destroy-environment:
+      #     run_id: ${RUN_ID:0:7}
+      # - revert-migrations:
+      #     run_id: ${RUN_ID:0:7}
 
   update-cloudfront-infrastructure:
     executor: python
