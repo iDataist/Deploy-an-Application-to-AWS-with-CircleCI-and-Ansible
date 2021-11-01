@@ -13,23 +13,29 @@ orbs:
   slack: circleci/slack@4.4.4
 commands:
   destroy-environment:
+    parameters:
+      run_id:
+        type: string
     steps:
       - run:
           name: Destroy environment
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.run_id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.run_id >>
+            aws s3 rm s3://udapeople-<< parameters.run_id >> --recursive
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      run_id:
+        type: string
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           working_directory: ./backend
           command: |
-            VALUE=$(curl -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request GET https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            VALUE=$(curl -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request GET https://api.memstash.io/values/migration_<< parameters.run_id >>)
             echo $VALUE
             if [[ "$VALUE" == "success" ]]
             then
@@ -144,16 +150,16 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file backend.yml \
-              --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name udapeople-backend-${RUN_ID:0:7} \
+              --parameter-overrides ID="${RUN_ID:0:7}" \
               --region us-east-1 \
-              --tags project=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+              --tags project=udapeople-backend-${RUN_ID:0:7}
       - run:
           name: Save backend ip and url
           working_directory: ./.circleci/ansible
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             echo [ubuntu]$'\n'$BACKEND_IP > inventory.txt
@@ -166,17 +172,18 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file frontend.yml \
-              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
+              --stack-name udapeople-frontend-${RUN_ID:0:7} \
+              --parameter-overrides ID="${RUN_ID:0:7}" \
               --region us-east-1 \
-              --tags project=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+              --tags project=udapeople-frontend-${RUN_ID:0:7}
       - run: yum install -y tar gzip
       - persist_to_workspace:
           root: .
           paths:
             - .circleci/ansible/inventory.txt
             - .circleci/ansible/backend-url.txt
-      - destroy-environment
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
   configure-infrastructure:
     executor: python
     steps:
@@ -206,16 +213,18 @@ jobs:
           working_directory: ./backend
           command: |
             npm run migrations > migrations_dump.txt
+            echo migrations_dump.txt
       - run:
           name: Send migration results to memstash
           working_directory: ./backend
           command: |
             if grep -q "has been executed successfully." migrations_dump.txt
             then
-              echo "Database migration was successful for ${CIRCLE_WORKFLOW_ID:0:7}"
-              curl -H "Content-Type: text/plain" -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request PUT --data "success" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+              echo "Database migration was successful for ${RUN_ID:0:7}"
+              curl -H "Content-Type: text/plain" -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request PUT --data "success" https://api.memstash.io/values/migration_${RUN_ID:0:7}
             fi
-      - destroy-environment
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
   deploy-backend-artifacts:
     executor: python
     steps:
@@ -227,7 +236,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible nodejs npm
+            apk add --update ansible nodejs npm curl
             ansible --version
             pip install awscli
             aws --version
@@ -236,8 +245,10 @@ jobs:
           working_directory: ./.circleci/ansible
           command: |
              ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
-      - destroy-environment
-      - revert-migrations
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
+      - revert-migrations:
+          run_id: ${RUN_ID:0:7}
   deploy-frontend-artifacts:
     executor: python
     steps:
@@ -247,7 +258,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update nodejs npm
+            apk add --update nodejs npm curl
             pip install awscli
             aws --version
       - run:
@@ -259,9 +270,11 @@ jobs:
       - run:
           name: Deploy frontend artifacts
           command: |
-            aws s3 cp frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy-environment
-      - revert-migrations
+            aws s3 cp frontend/dist s3://udapeople-${RUN_ID:0:7} --recursive
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
+      - revert-migrations:
+          run_id: ${RUN_ID:0:7}
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image
