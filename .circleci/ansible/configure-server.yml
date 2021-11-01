@@ -12,6 +12,7 @@
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
   environment:
+    - ENVIRONMENT: dev
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
     - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
     - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
