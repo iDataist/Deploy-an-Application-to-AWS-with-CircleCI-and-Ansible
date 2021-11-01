@@ -184,12 +184,14 @@ jobs:
           working_directory: ./.circleci/ansible
           command: |
              ansible-playbook -i inventory.txt configure-server.yml
-  run-migrations:
+  run-database-migrations:
     executor: node
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
-          name: Run migrations
+          name: Run database migrations
           command: |
             npm run migrations --prefix backend > backend/migrations_dump.txt
       - run:
@@ -201,7 +203,7 @@ jobs:
               curl -H "Content-Type: text/plain" -H "token: 9a8ffa11-8e4b-4453-a4f0-b83ded8d1f04" --request PUT --data "success" https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
             fi
       - destroy-environment
-  deploy-backend:
+  deploy-backend-artifact:
     executor: python
     steps:
       - checkout
@@ -212,39 +214,41 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
+            apk add --update ansible nodejs npm
             ansible --version
+            pip install awscli
+            aws --version
       - run:
-          name: Deploy backend
+          name: Deploy backend artifact
+          working_directory: ./.circleci/ansible
           command: |
-             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml
+             ansible-playbook -i inventory.txt deploy-backend-artifact.yml
       - destroy-environment
       - revert-migrations
-  # deploy-frontend:
-  #   executor: aws
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Get backend url
-  #         command: |
-  #           # your code here
-  #           export API_URL="http://${BACKEND_IP}:3030"
-  #           echo "${API_URL}"
-  #     - run:
-  #         name: Deploy frontend objects
-  #         command: |
-  #           # your code here
-  #     - destroy-environment
-  #     - revert-migrations
-
-
-
+  deploy-frontend-artifact:
+    executor: python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update nodejs npm
+            pip install awscli
+            aws --version
+      - run:
+          name: Get backend url and rebuild the frontend
+          command: |
+            export API_URL=`cat .circleci/ansible/backend-url.txt`
+            echo "${API_URL}"
+            npm run build --prefix frontend
+      - run:
+          name: Deploy frontend artifacts
+          command: |
+            aws s3 cp frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment
+      - revert-migrations
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image
@@ -327,14 +331,14 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
+      - run-database-migrations:
           requires: [configure-infrastructure]
-      - deploy-backend:
-          requires: [run-migrations]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
+      - deploy-backend-artifact:
+          requires: [run-database-migrations]
+      - deploy-frontend-artifact:
+          requires: [run-database-migrations]
       # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      #     requires: [deploy-backend-artifact, deploy-frontend-artifact]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
