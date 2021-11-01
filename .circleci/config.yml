@@ -298,18 +298,18 @@ jobs:
       #       fi
       - run:
           name: Backend smoke test
-                command: |
-                  export BACKEND_IP=$(aws ec2 describe-instances \
-                    --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
-                    --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                    --output text)
-                  echo http://${BACKEND_IP}:3030/api/status
-                  if
-                    curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
-                  then
-                    exit 0
-                  else
-                    exit 1
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            echo http://${BACKEND_IP}:3030/api/status
+            if
+              curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
+            then
+              exit 0
+            else
+              exit 1
       - run:
           name: Frontend smoke test
           command: |
@@ -336,6 +336,25 @@ jobs:
             apk add --update nodejs npm curl
             pip install awscli
             aws --version
+      - run:
+          name: Update cloudfront distribution
+          working_directory: ./.circleci/files
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name udapeople-cloudfront-${RUN_ID:0:7} \
+              --parameter-overrides WorkflowID=udapeople-${RUN_ID:0:7} \
+              --region us-east-1 \
+              --tags project=udapeople-frontend-${RUN_ID:0:7}
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
+      - revert-migrations:
+          run_id: ${RUN_ID:0:7}
+
+  cleanup:
+    executor: aws
+    steps:
+      - checkout
       - run: Clean up old infrastructure
           command: |
             WORKFLOW_ID=$(aws cloudformation list-exports \
@@ -355,20 +374,6 @@ jobs:
             else
               echo "$WORKFLOW_ID==${RUN_ID:0:7} => nothing needs to be done"
             fi
-      - run:
-          name: Update cloudfront distribution
-          working_directory: ./.circleci/files
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/cloudfront.yml \
-              --stack-name udapeople-cloudfront-${RUN_ID:0:7} \
-              --parameter-overrides WorkflowID=udapeople-${RUN_ID:0:7} \
-              --region us-east-1 \
-              --tags project=udapeople-frontend-${RUN_ID:0:7}
-      - destroy-environment:
-          run_id: ${RUN_ID:0:7}
-      - revert-migrations:
-          run_id: ${RUN_ID:0:7}
 
 workflows:
   default:
@@ -404,5 +409,5 @@ workflows:
           requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
