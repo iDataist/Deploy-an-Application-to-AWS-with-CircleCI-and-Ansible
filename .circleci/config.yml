@@ -296,24 +296,23 @@ jobs:
       #       else
       #           return 1
       #       fi
-      - run:
-          name: Backend smoke test
-          command: |
-            export BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            echo http://${BACKEND_IP}:3030/api/status
-            if
-              curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
-            then
-              return 0
-            else
-              return 1
-            fi
+      # - run:
+      #     name: Backend smoke test
+      #     command: |
+      #       export BACKEND_IP=$(aws ec2 describe-instances \
+      #         --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
+      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #         --output text)
+      #       echo http://${BACKEND_IP}:3030/api/status
+      #       if
+      #         curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
+      #       then
+      #         return 0
+      #       else
+      #         return 1
+      #       fi
       - run:
           name: Frontend smoke test
-          when: on_fail
           command: |
             URL="http://udapeople-${RUN_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
             echo ${URL}
@@ -402,15 +401,15 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-database-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-backend-artifacts:
-      #     requires: [run-database-migrations]
-      # - deploy-frontend-artifacts:
-      #     requires: [run-database-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
-      # - update-cloudfront-infrastructure:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [update-cloudfront-infrastructure]
+      - run-database-migrations:
+          requires: [configure-infrastructure]
+      - deploy-backend-artifacts:
+          requires: [run-database-migrations]
+      - deploy-frontend-artifacts:
+          requires: [run-database-migrations]
+      - smoke-test:
+          requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
+      - update-cloudfront-infrastructure:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [update-cloudfront-infrastructure]
