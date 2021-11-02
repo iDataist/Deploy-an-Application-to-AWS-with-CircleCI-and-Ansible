@@ -322,11 +322,10 @@ jobs:
             else
               return 1
             fi
-      # - destroy-environment:
-      #     run_id: ${RUN_ID:0:7}
-      # - revert-migrations:
-      #     run_id: ${RUN_ID:0:7}
-
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
+      - revert-migrations:
+          run_id: ${RUN_ID:0:7}
   update-cloudfront-infrastructure:
     executor: python
     steps:
@@ -351,7 +350,6 @@ jobs:
           run_id: ${RUN_ID:0:7}
       - revert-migrations:
           run_id: ${RUN_ID:0:7}
-
   cleanup:
     executor: aws
     steps:
@@ -365,7 +363,7 @@ jobs:
               --output text)
             echo "WORKFLOW_ID: $WORKFLOW_ID"
 
-            if [[ $WORKFLOW_ID != ${RUN_ID:0:7} ]]
+            if [[ $WORKFLOW_ID != udapeople-${RUN_ID:0:7} ]]
             then
               echo "$WORKFLOW_ID!=${RUN_ID:0:7} => will delete old infrastructure"
               aws s3 rm "s3://udapeople-${WORKFLOW_ID}" --recursive
@@ -376,7 +374,6 @@ jobs:
             else
               echo "$WORKFLOW_ID==${RUN_ID:0:7} => nothing needs to be done"
             fi
-
 workflows:
   default:
     jobs:
@@ -410,7 +407,7 @@ workflows:
       # - smoke-test:
       #     requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
       # - update-cloudfront-infrastructure:
-          # requires: [smoke-test]
+      #     requires: [smoke-test]
       - update-cloudfront-infrastructure
       - cleanup:
           requires: [update-cloudfront-infrastructure]
