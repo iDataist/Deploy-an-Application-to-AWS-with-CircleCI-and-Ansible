@@ -190,7 +190,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["8b:57:8d:f1:2d:6e:ba:2b:03:af:57:fa:a4:80:ae:ab"]
+          fingerprints: ["9c:b0:7a:91:46:2e:a3:3f:f1:35:14:74:44:43:66:91"]
       - attach_workspace:
           at: .
       - run:
@@ -233,7 +233,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["8b:57:8d:f1:2d:6e:ba:2b:03:af:57:fa:a4:80:ae:ab"]
+          fingerprints: ["9c:b0:7a:91:46:2e:a3:3f:f1:35:14:74:44:43:66:91"]
       - attach_workspace:
           at: .
       - run:
@@ -247,12 +247,7 @@ jobs:
           name: Deploy backend artifact
           working_directory: ./.circleci/ansible
           command: |
-            BACKEND_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            echo [ubuntu]$'\n'$BACKEND_IP > inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
+             ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
       - destroy-environment:
           run_id: ${RUN_ID:0:7}
       - revert-migrations:
@@ -292,21 +287,6 @@ jobs:
             apk add --update nodejs npm curl
             pip install awscli
             aws --version
-      # - run:
-      #     name: Backend smoke test
-      #     command: |
-      #       export BACKEND_IP=$(aws ec2 describe-instances \
-      #         --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #         --output text)
-      #       echo http://${BACKEND_IP}:3030/api/status
-      #       if
-      #         curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
-      #       then
-      #         return 0
-      #       else
-      #         return 1
-      #       fi
       # - run:
       #     name: Backend smoke test
       #     command: |
