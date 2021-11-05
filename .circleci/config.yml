@@ -279,6 +279,8 @@ jobs:
   smoke-test:
     executor: python
     steps:
+      - attach_workspace:
+          at: .
       - run:
           name: Install dependencies
           command: |
@@ -295,21 +297,6 @@ jobs:
       #           return 0
       #       else
       #           return 1
-      #       fi
-      # - run:
-      #     name: Backend smoke test
-      #     command: |
-      #       export BACKEND_IP=$(aws ec2 describe-instances \
-      #         --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #         --output text)
-      #       echo http://${BACKEND_IP}:3030/api/status
-      #       if
-      #         curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
-      #       then
-      #         return 0
-      #       else
-      #         return 1
       #       fi
       - run:
           name: Frontend smoke test
