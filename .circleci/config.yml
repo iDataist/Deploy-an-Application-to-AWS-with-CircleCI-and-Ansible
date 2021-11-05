@@ -281,23 +281,25 @@ jobs:
   smoke-test:
     executor: python
     steps:
+      - attach_workspace:
+          at: .
       - run:
           name: Install dependencies
           command: |
             apk add --update nodejs npm curl
             pip install awscli
             aws --version
-      # - run:
-      #     name: Backend smoke test
-      #     command: |
-      #       export API_URL=`cat .circleci/ansible/backend-url.txt`
-      #       echo "${API_URL}"
-      #       if curl "${API_URL}/api/status" | grep "ok"
-      #       then
-      #           return 0
-      #       else
-      #           return 1
-      #       fi
+      - run:
+          name: Backend smoke test
+          command: |
+            export API_URL=`cat .circleci/ansible/backend-url.txt`
+            echo "${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+                return 0
+            else
+                return 1
+            fi
       - run:
           name: Frontend smoke test
           command: |
@@ -333,8 +335,8 @@ jobs:
               --parameter-overrides WorkflowID=udapeople-${RUN_ID:0:7} \
               --region us-east-1 \
               --tags project=udapeople-frontend-${RUN_ID:0:7}
-      - destroy-environment:
-          run_id: ${RUN_ID:0:7}
+      # - destroy-environment:
+      #     run_id: ${RUN_ID:0:7}
       - revert-migrations:
           run_id: ${RUN_ID:0:7}
   cleanup:
