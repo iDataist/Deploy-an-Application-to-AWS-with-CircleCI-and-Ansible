@@ -247,7 +247,12 @@ jobs:
           name: Deploy backend artifact
           working_directory: ./.circleci/ansible
           command: |
-             ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
+            BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            echo [ubuntu]$'\n'$BACKEND_IP > inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
       - destroy-environment:
           run_id: ${RUN_ID:0:7}
       - revert-migrations:
@@ -281,14 +286,27 @@ jobs:
   smoke-test:
     executor: python
     steps:
-      - attach_workspace:
-          at: .
       - run:
           name: Install dependencies
           command: |
             apk add --update nodejs npm curl
             pip install awscli
             aws --version
+      # - run:
+      #     name: Backend smoke test
+      #     command: |
+      #       export BACKEND_IP=$(aws ec2 describe-instances \
+      #         --filters "Name=tag:project,Values=udapeople-backend-${RUN_ID:0:7}" \
+      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #         --output text)
+      #       echo http://${BACKEND_IP}:3030/api/status
+      #       if
+      #         curl -s http://${BACKEND_IP}:3030/api/status | grep "ok"
+      #       then
+      #         return 0
+      #       else
+      #         return 1
+      #       fi
       # - run:
       #     name: Backend smoke test
       #     command: |
