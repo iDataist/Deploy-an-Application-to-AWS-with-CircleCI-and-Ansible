@@ -377,37 +377,36 @@ jobs:
 workflows:
   default:
     jobs:
-      # - install-backend-dependencies
-      # - install-frontend-dependencies
-      # - build-backend:
-      #     requires: [install-backend-dependencies]
-      # - build-frontend:
-      #     requires: [install-frontend-dependencies]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [main]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-database-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-backend-artifacts:
-      #     requires: [run-database-migrations]
-      # - deploy-frontend-artifacts:
-      #     requires: [run-database-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
-      # - update-cloudfront-infrastructure:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [update-cloudfront-infrastructure]
-      - cleanup
+      - install-backend-dependencies
+      - install-frontend-dependencies
+      - build-backend:
+          requires: [install-backend-dependencies]
+      - build-frontend:
+          requires: [install-frontend-dependencies]
+      - test-backend:
+          requires: [build-backend]
+      - test-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-database-migrations:
+          requires: [configure-infrastructure]
+      - deploy-backend-artifacts:
+          requires: [run-database-migrations]
+      - deploy-frontend-artifacts:
+          requires: [run-database-migrations]
+      - smoke-test:
+          requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
+      - update-cloudfront-infrastructure:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [update-cloudfront-infrastructure]
