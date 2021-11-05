@@ -16,11 +16,15 @@ aws s3 rm s3://udapeople-aldkgke --recursive
 
 # create an EC2 instance with 22, 9090, 9093, 9100 inbound port open
 aws ec2 run-instances \
---image-id ami-09e67e426f25ce0d7 \
+--image-id ami-083654bd07b5da81d \
 --count 1 \
 --instance-type t2.micro \
 --key-name ec2 \
 --security-group-ids sg-0ec08075ac9543720
+--tag-specifications 'ResourceType=instance,Tags=[{Key=monitoring,Value=prometheum-host}]'
+
+# terminate ec2 instance
+aws ec2 terminate-instances --instance-ids i-03010d7427d478f44
 
 # ssh into EC2 instance
 chmod 400 ec2.pem
