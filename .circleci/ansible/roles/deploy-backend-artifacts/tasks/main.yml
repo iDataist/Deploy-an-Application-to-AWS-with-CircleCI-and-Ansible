@@ -13,6 +13,12 @@
       src: ../../backend/dist
       dest: /home/ubuntu/app
       recursive: true
+  - name: "synchronize package.json file"
+    become: yes
+    synchronize:
+      src: ../../backend/package.json
+      dest: /home/ubuntu/app
+      recursive: true
   - name: "delete anything that is running"
     become: true
     command: pm2 delete all
