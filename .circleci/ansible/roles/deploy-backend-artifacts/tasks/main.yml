@@ -12,7 +12,7 @@
     command: pm2 delete all
     ignore_errors: true
   - name: "start server"
-    command: |
+    shell: |
       cd /home/ubuntu/backend
       pm2 start npm
     environment:
