@@ -5,19 +5,19 @@
     become: yes
     synchronize:
       src: ../../backend/node_modules
-      dest: /home/ubuntu/app
+      dest: /home/ubuntu
       recursive: true
   - name: "synchronize backend binaries"
     become: yes
     synchronize:
       src: ../../backend/dist
-      dest: /home/ubuntu/app
+      dest: /home/ubuntu
       recursive: true
   - name: "synchronize package.json file"
     become: yes
     synchronize:
       src: ../../backend/package.json
-      dest: /home/ubuntu/app
+      dest: /home/ubuntu
       recursive: true
   - name: "delete anything that is running"
     become: true
