@@ -246,7 +246,7 @@ jobs:
           name: Deploy backend artifact
           working_directory: .circleci/ansible
           command: |
-            echo "Contents of the inventory.txt file is -------"
+            echo "Contents of the inventory.txt file is -----"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
       - destroy-environment:
