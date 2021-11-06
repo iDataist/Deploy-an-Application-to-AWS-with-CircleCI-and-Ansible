@@ -99,3 +99,109 @@ sudo systemctl enable prometheus
 
 service prometheus status
 sudo service prometheus restart
+
+# install Alertmanager
+wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
+tar xvfz alertmanager-0.21.0.linux-amd64.tar.gz
+
+sudo cp alertmanager-0.21.0.linux-amd64/alertmanager /usr/local/bin
+sudo cp alertmanager-0.21.0.linux-amd64/amtool /usr/local/bin/
+sudo mkdir /var/lib/alertmanager
+
+rm -rf alertmanager*
+
+# Add Alertmanager’s configuration
+sudo vim /etc/prometheus/alertmanager.yml
+# paste the following content
+route:
+  group_by: [Alertname]
+  receiver: email-me
+
+receivers:
+- name: email-me
+  email_configs:
+  - to: EMAIL_YO_WANT_TO_SEND_EMAILS_TO
+    from: YOUR_EMAIL_ADDRESS
+    smarthost: smtp.gmail.com:587
+    auth_username: YOUR_EMAIL_ADDRESS
+    auth_identity: YOUR_EMAIL_ADDRESS
+    auth_password: YOUR_EMAIL_PASSWORD
+# exit
+:wq
+
+# Configure Alertmanager as a service
+sudo vim /etc/systemd/system/alertmanager.service
+# paste the following content
+[Unit]
+Description=Alert Manager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+ExecStart=/usr/local/bin/alertmanager \
+  --config.file=/etc/prometheus/alertmanager.yml \
+  --storage.path=/var/lib/alertmanager
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+# exit
+:wq
+
+# create a rule
+sudo vim /etc/prometheus/rules.yml
+# paste the following content
+groups:
+- name: Down
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 3m
+    labels:
+      severity: 'critical'
+    annotations:
+      summary: "Instance  is down"
+      description: " of job  has been down for more than 3 minutes."
+# exit
+:wq
+
+# Configure Prometheus
+sudo chown -R prometheus:prometheus /etc/prometheus
+
+# Update Prometheus configuration file
+sudo vim /etc/prometheus/prometheus.yml
+#delete all lines
+:1,$d
+# paste the following content
+global:
+  scrape_interval: 1s
+  evaluation_interval: 1s
+
+rule_files:
+ - /etc/prometheus/rules.yml
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - localhost:9093
+
+scrape_configs:
+  - job_name: 'node'
+    ec2_sd_configs:
+      - region: us-east-1
+        access_key: ASIA3VWHZ2J4KXED75OK
+        secret_key: n5irZlHkQzNDiKEOtDfBYiYVjr8+K82aCdd76Vhx
+        port: 9100
+# exit
+:wq
+
+# Reload Systemd
+sudo systemctl restart prometheus
+
+
+sudo chown -R prometheus:prometheus /data/prometheus/
