@@ -4,19 +4,7 @@
   - name: "synchronize backend installations"
     become: yes
     synchronize:
-      src: ../../backend/node_modules
-      dest: /home/ubuntu
-      recursive: true
-  - name: "synchronize backend binaries"
-    become: yes
-    synchronize:
-      src: ../../backend/dist
-      dest: /home/ubuntu
-      recursive: true
-  - name: "synchronize package.json file"
-    become: yes
-    synchronize:
-      src: ../../backend/package.json
+      src: ../../backend
       dest: /home/ubuntu
       recursive: true
   - name: "delete anything that is running"
@@ -24,10 +12,9 @@
     command: pm2 delete all
     ignore_errors: true
   - name: "start server"
-    become: true
-    command: pm2 start -f ./main.js
-    args:
-      chdir: /home/ubuntu/app/dist
+    command: |
+      cd /home/ubuntu/backend
+      pm2 start npm
     environment:
       - ENVIRONMENT: dev
       - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
