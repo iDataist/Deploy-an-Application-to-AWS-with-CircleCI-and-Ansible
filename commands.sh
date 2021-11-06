@@ -24,7 +24,7 @@ aws ec2 run-instances \
 --tag-specifications 'ResourceType=instance,Tags=[{Key=monitoring,Value=prometheum-host}]'
 
 # terminate ec2 instance
-aws ec2 terminate-instances --instance-ids  i-05c15d9b474bc3acc
+aws ec2 terminate-instances --instance-ids i-0e85ca0e6c5ce9ec5
 
 # ssh into EC2 instance
 chmod 400 ec2.pem
@@ -96,3 +96,6 @@ sudo chown -R prometheus:prometheus /var/lib/prometheus
 # configure systemd
 sudo systemctl daemon-reload
 sudo systemctl enable prometheus
+
+service prometheus status
+sudo service prometheus restart
