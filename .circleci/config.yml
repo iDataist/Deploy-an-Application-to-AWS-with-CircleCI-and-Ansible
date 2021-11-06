@@ -311,10 +311,10 @@ jobs:
             else
               return 1
             fi
-      - destroy-environment:
-          run_id: ${RUN_ID:0:7}
-      - revert-migrations:
-          run_id: ${RUN_ID:0:7}
+      # - destroy-environment:
+      #     run_id: ${RUN_ID:0:7}
+      # - revert-migrations:
+      #     run_id: ${RUN_ID:0:7}
   update-cloudfront-infrastructure:
     executor: python
     steps:
@@ -335,8 +335,8 @@ jobs:
               --parameter-overrides WorkflowID=udapeople-${RUN_ID:0:7} \
               --region us-east-1 \
               --tags project=udapeople-frontend-${RUN_ID:0:7}
-      # - destroy-environment:
-      #     run_id: ${RUN_ID:0:7}
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
       - revert-migrations:
           run_id: ${RUN_ID:0:7}
   cleanup:
