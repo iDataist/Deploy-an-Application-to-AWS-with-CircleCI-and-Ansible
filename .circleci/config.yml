@@ -240,9 +240,8 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible nodejs npm curl rsync openssh openssh-client
-            ansible --version
+            apk add --upgrade bash
             pip install awscli
-            aws --version
       - run:
           name: Deploy backend artifact
           working_directory: .circleci/ansible
