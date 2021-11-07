@@ -108,7 +108,19 @@ scrape_configs:
   - job_name: 'node_exporter'
     static_configs:
      # DNS of the node exporter
-      - targets: ['ec2-54-208-192-147.compute-1.amazonaws.com:9100']
+      - targets: ['localhost:9090', 'ec2-3-92-188-170.compute-1.amazonaws.com:9100']
+# auto discovery
+global:
+  scrape_interval: 1s
+  evaluation_interval: 1s
+
+scrape_configs:
+  - job_name: 'node'
+    ec2_sd_configs:
+      - region: us-east-1
+        access_key: ASIA3VWHZ2J4PKGDTXED
+        secret_key: RSJn1Y6qgunLC3GhKrbcepj5wv6u+dGsGQztvhGn
+        port: 9100
 # exit
 :wq
 
@@ -117,6 +129,13 @@ sudo systemctl restart prometheus
 service prometheus status
 sudo service prometheus restart
 
+service node-exporter status
+sudo service node-exporter restart
+
+sudo systemctl daemon-reload
+sudo systemctl enable node-exporter
+sudo systemctl start node-exporter
+sudo systemctl status node-exporter
 -------------------------------------------------------------------------------
 # install Alertmanager
 wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
@@ -215,6 +234,21 @@ scrape_configs:
         access_key: ASIA3VWHZ2J4MBAUIFC7
         secret_key: I7YS7sOKVvXxkGvunyOmLEHEmxQAkprfFr5KdF+a
         port: 9100
+# or specify the target
+global:
+  scrape_interval: 1s
+  evaluation_interval: 1s
+rule_files:
+ - /etc/prometheus/rules.yml
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - localhost:9093
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['ec2-54-208-192-147.compute-1.amazonaws.com:9100']
 # exit
 :wq
 
@@ -224,17 +258,7 @@ sudo systemctl restart prometheus
 
 service prometheus status
 sudo service prometheus restart
+
 service alertmanager status
 sudo service alertmanager restart
-
------------------------------------------
-sudo useradd --no-create-home --shell /bin/false alertmanager
-
-wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
-tar xvfz alertmanager-0.21.0.linux-amd64.tar.gz
-
-sudo cp alertmanager-0.21.0.linux-amd64/alertmanager /usr/local/bin
-sudo cp alertmanager-0.21.0.linux-amd64/amtool /usr/local/bin/
-sudo mkdir /var/lib/alertmanager
-
-rm -rf alertmanager*
+-------------------------------------------------------------------------------
