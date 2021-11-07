@@ -13,14 +13,14 @@ import { Product } from './entities/product.entity';
 import { SyncCommandDispatcher } from '../../common/commands';
 import { CommandValidators } from './commands/validators';
 import { AuthModule } from '../../auth/auth.module';
-import { PassportModule} from "@nestjs/passport";
+import { PassportModule} from '@nestjs/passport';
 
 @Module({
   imports: [
     CommonModule,
     TypeOrmModule.forFeature([Product, Order]),
     AuthModule,
-    PassportModule.register({ defaultStrategy: 'jwt' })
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [OrdersController],
   providers: [

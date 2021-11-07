@@ -77,5 +77,5 @@ export const CommandValidators = [
   CheckUpdateBirthDatePropertiesValue,
   UpdateEmployeeBirthDateCompositeValidator,
   ActivateEmployeeCompositeValidator,
-  CheckEmployeeExistsOnActivate
+  CheckEmployeeExistsOnActivate,
 ];

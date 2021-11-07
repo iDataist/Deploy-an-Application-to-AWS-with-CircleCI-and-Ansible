@@ -12,7 +12,7 @@ export class EmployeeCreator extends BaseCommandHandler<CreateEmployee, Employee
     super();
   }
   async handle(command: CreateEmployee): Promise<Employee> {
-    
+
     const employee = new Employee(command);
     return await this.employeeRepository.save(employee);
   }

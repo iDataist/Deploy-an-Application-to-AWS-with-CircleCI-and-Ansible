@@ -13,7 +13,7 @@
     "prestart:prod": "rimraf dist && tsc",
     "start:prod": "node dist/main.js",
     "start:hmr": "node dist/server",
-    "lint": "tslint -p tsconfig.json -c tslint.json --fix",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -39,7 +39,7 @@
     "@nestjs/jwt": "^6.0.0",
     "@nestjs/passport": "^6.2.0",
     "@nestjs/platform-express": "^6.11.11",
-    "@nestjs/swagger": "^4.7.0",
+    "@nestjs/swagger": "^4.6.1",
     "@nestjs/typeorm": "^6.3.4",
     "@types/jsonwebtoken": "^7.2.8",
     "@types/winston": "^2.4.4",
@@ -79,7 +79,7 @@
     "rimraf": "^2.6.2",
     "standard-version": "^9.0.0",
     "supertest": "^3.4.2",
-    "ts-jest": "^26.4.3",
+    "ts-jest": "^26.4.0",
     "ts-loader": "^4.4.2",
     "ts-node": "^7.0.1",
     "tsconfig-paths": "^3.9.0",
@@ -90,6 +90,11 @@
     "webpack-node-externals": "^1.7.2"
   },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "isolatedModules": true
+      }
+    },
     "moduleFileExtensions": [
       "js",
       "json",

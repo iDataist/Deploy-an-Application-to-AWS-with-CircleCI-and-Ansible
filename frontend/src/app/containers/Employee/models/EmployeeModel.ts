@@ -58,10 +58,10 @@ export interface EmployeeUpdateNamesModel {
   secondLastName: string;
 }
 
-export interface EmployeeUpdateStringFieldModel {value: string;}
-export interface EmployeeUpdateDateFieldModel {value: Date;}
-export interface EmployeeUpdateNumberFieldModel {value: number;}
-export interface EmployeeUpdateSalaryTypeModel {salaryType: SalaryType;}
+export interface EmployeeUpdateStringFieldModel {value: string; }
+export interface EmployeeUpdateDateFieldModel {value: Date; }
+export interface EmployeeUpdateNumberFieldModel {value: number; }
+export interface EmployeeUpdateSalaryTypeModel {salaryType: SalaryType; }
 
 export namespace EmployeeModel {
   export const dateFormat = 'M/D/YYYY';

@@ -14,7 +14,7 @@ export class CheckUpdateAddressPropertiesValue extends JoiCommandValidator<
         .string()
         .required(),
       city: joi.string().required(),
-      region: joi.string().required()
+      region: joi.string().required(),
     });
   }
 }

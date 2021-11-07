@@ -9,7 +9,7 @@ export class CheckUpdateSalaryPropertiesValue extends JoiCommandValidator<
   getSchema(command: UpdateEmployeeSalary) {
     return joi.object({
       employeeId: joi.number().required(),
-      salary: joi.number().required()
+      salary: joi.number().required(),
     });
   }
 }

@@ -18,7 +18,7 @@ export class CheckUpdateNamePropertiesValue extends JoiCommandValidator<
       secondLastName: joi
         .string()
         .allow('')
-        .optional()
+        .optional(),
     });
   }
 }

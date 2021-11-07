@@ -275,7 +275,6 @@ jobs:
             echo "${API_URL}"
             cd frontend
             npm install
-            npm audit fix --audit-level=critical --force
             npm run build
       - run:
           name: Deploy frontend artifacts
@@ -318,10 +317,10 @@ jobs:
             else
               return 1
             fi
-      # - destroy-environment:
-      #     run_id: ${RUN_ID:0:7}
-      # - revert-migrations:
-      #     run_id: ${RUN_ID:0:7}
+      - destroy-environment:
+          run_id: ${RUN_ID:0:7}
+      - revert-migrations:
+          run_id: ${RUN_ID:0:7}
   update-cloudfront-infrastructure:
     executor: python
     steps:

@@ -14,7 +14,7 @@ export class EmployeeBirthDateUpdater extends BaseCommandHandler<UpdateEmployeeB
   async handle(command: UpdateEmployeeBirthdate): Promise<void> {
     const {
       employeeId,
-      birthdate
+      birthdate,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);

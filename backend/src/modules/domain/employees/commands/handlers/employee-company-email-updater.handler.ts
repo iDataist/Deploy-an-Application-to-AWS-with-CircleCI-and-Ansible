@@ -13,7 +13,7 @@ export class EmployeeCompanyEmailUpdater extends BaseCommandHandler<UpdateEmploy
   async handle(command: UpdateEmployeeCompanyEmail): Promise<void> {
     const {
       employeeId,
-      companyEmail
+      companyEmail,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);

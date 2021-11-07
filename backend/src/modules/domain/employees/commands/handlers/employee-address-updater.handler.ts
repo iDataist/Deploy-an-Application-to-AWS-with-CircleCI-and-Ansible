@@ -16,7 +16,7 @@ export class EmployeeAddressUpdater extends BaseCommandHandler<UpdateEmployeeAdd
       address,
       country,
       region,
-      city
+      city,
     } = command;
 
     const employee = await this.employeeRepository.findById(employeeId);
