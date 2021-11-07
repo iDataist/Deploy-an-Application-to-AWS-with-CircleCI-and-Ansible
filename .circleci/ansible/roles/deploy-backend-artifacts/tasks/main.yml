@@ -3,11 +3,6 @@
     cd /home/ubuntu/backend
     npm install
     npm run build
-- name: "synchronize backend installations"
-  synchronize:
-    src: ../../backend
-    dest: /home/ubuntu
-    recursive: true
 - name: "start server"
   shell: |
     cd /home/ubuntu/backend
