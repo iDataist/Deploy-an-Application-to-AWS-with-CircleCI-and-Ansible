@@ -7,6 +7,7 @@ export class UpdateEmployeeName implements ICommand {
   lastName: string;
   secondLastName: string;
 
+
   constructor(employeeId: number, firstName: string, middleName: string, lastName: string, secondLastName: string ) {
     this.employeeId = employeeId;
     this.firstName = firstName;

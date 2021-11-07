@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="12" failures="1" errors="0" time="3.622">
+  <testsuite name="&lt;LoadingMessage&gt;" errors="0" failures="1" skipped="0" timestamp="2020-10-23T13:53:19" time="1.031" tests="1">
+    <testcase classname="&lt;LoadingMessage&gt; Props message Should render the props message" name="&lt;LoadingMessage&gt; Props message Should render the props message" time="0.006">
+      <failure>Error: expect(received).toBeTruthy()
+
+Received: false
+    at Object.&lt;anonymous&gt; (/Users/q281756/dev/udacity-cloud-devops-engineer-project-3/frontend/src/app/components/LoadingMessage/LoadingMessage.spec.tsx:11:59)
+    at Object.asyncJestTest (/Users/q281756/dev/udacity-cloud-devops-engineer-project-3/frontend/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js:102:37)
+    at /Users/q281756/dev/udacity-cloud-devops-engineer-project-3/frontend/node_modules/jest-jasmine2/build/queueRunner.js:43:12
+    at new Promise (&lt;anonymous&gt;)
+    at mapper (/Users/q281756/dev/udacity-cloud-devops-engineer-project-3/frontend/node_modules/jest-jasmine2/build/queueRunner.js:26:19)
+    at /Users/q281756/dev/udacity-cloud-devops-engineer-project-3/frontend/node_modules/jest-jasmine2/build/queueRunner.js:73:41</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="&lt;Pagination&gt;" errors="0" failures="0" skipped="0" timestamp="2020-10-23T13:53:20" time="0.207" tests="6">
+    <testcase classname="&lt;Pagination&gt; Should render" name="&lt;Pagination&gt; Should render" time="0.002">
+    </testcase>
+    <testcase classname="&lt;Pagination&gt; State Should calculate correctly the pagination properties Should calculate the number of pages" name="&lt;Pagination&gt; State Should calculate correctly the pagination properties Should calculate the number of pages" time="0.003">
+    </testcase>
+    <testcase classname="&lt;Pagination&gt; State Should calculate correctly the pagination properties Should calculate correcly the page first order index" name="&lt;Pagination&gt; State Should calculate correctly the pagination properties Should calculate correcly the page first order index" time="0.001">
+    </testcase>
+    <testcase classname="&lt;Pagination&gt; State Should calculate correctly the pagination properties When current page is the last one Should calculate correcly the page last order index" name="&lt;Pagination&gt; State Should calculate correctly the pagination properties When current page is the last one Should calculate correcly the page last order index" time="0.002">
+    </testcase>
+    <testcase classname="&lt;Pagination&gt; Props when receiving page prop should update the page input value" name="&lt;Pagination&gt; Props when receiving page prop should update the page input value" time="0.005">
+    </testcase>
+    <testcase classname="&lt;Pagination&gt; Props when fetching data from the backend should disable the pagination buttons" name="&lt;Pagination&gt; Props when fetching data from the backend should disable the pagination buttons" time="0.015">
+    </testcase>
+  </testsuite>
+  <testsuite name="&lt;Empty /&gt;" errors="0" failures="0" skipped="0" timestamp="2020-10-23T13:53:21" time="0.112" tests="1">
+    <testcase classname="&lt;Empty /&gt; When rendering the component Should render correctly" name="&lt;Empty /&gt; When rendering the component Should render correctly" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="&lt;NoFilteredOrders&gt;" errors="0" failures="0" skipped="0" timestamp="2020-10-23T13:53:21" time="0.115" tests="1">
+    <testcase classname="&lt;NoFilteredOrders&gt; when reset button is clicked should called handleResetOrders with empty string" name="&lt;NoFilteredOrders&gt; when reset button is clicked should called handleResetOrders with empty string" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="Employees Reducer" errors="0" failures="0" skipped="0" timestamp="2020-10-23T13:53:21" time="0.214" tests="3">
+    <testcase classname="Employees Reducer ADD_EMPLOYEE_REQUEST Should set the isFetching flag to true" name="Employees Reducer ADD_EMPLOYEE_REQUEST Should set the isFetching flag to true" time="0.001">
+    </testcase>
+    <testcase classname="Employees Reducer ADD_EMPLOYEE_FAILURE Should update the state error message" name="Employees Reducer ADD_EMPLOYEE_FAILURE Should update the state error message" time="0">
+    </testcase>
+    <testcase classname="Employees Reducer ADD_EMPLOYEE_SUCCESS Should set the isFetching flag to false" name="Employees Reducer ADD_EMPLOYEE_SUCCESS Should set the isFetching flag to false" time="0">
+    </testcase>
+  </testsuite>
+</testsuites>
