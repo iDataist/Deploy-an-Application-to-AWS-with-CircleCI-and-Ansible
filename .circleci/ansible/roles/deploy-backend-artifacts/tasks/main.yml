@@ -11,4 +11,4 @@
 - name: "start server"
   shell: |
     cd /home/ubuntu/backend
-    pm2 start npm -- run "start:prod"
+    pm2 start npm -- run "start:dev"
