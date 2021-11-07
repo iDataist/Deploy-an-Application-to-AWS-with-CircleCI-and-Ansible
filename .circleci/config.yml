@@ -252,8 +252,8 @@ jobs:
           root: .
           paths:
             - backend/.env
-      - destroy-environment:
-          run_id: ${RUN_ID:0:7}
+      # - destroy-environment:
+      #     run_id: ${RUN_ID:0:7}
       - revert-migrations:
           run_id: ${RUN_ID:0:7}
   deploy-frontend-artifacts:
@@ -280,8 +280,8 @@ jobs:
           name: Deploy frontend artifacts
           command: |
             aws s3 cp frontend/dist s3://udapeople-${RUN_ID:0:7} --recursive
-      - destroy-environment:
-          run_id: ${RUN_ID:0:7}
+      # - destroy-environment:
+      #     run_id: ${RUN_ID:0:7}
       - revert-migrations:
           run_id: ${RUN_ID:0:7}
   smoke-test:
@@ -420,7 +420,7 @@ workflows:
             branches:
               only: [main]
       - run-database-migrations:
-          requires: [deploy-infrastructure]
+          requires: [configure-infrastructure]
           filters:
             branches:
               only: [main]
