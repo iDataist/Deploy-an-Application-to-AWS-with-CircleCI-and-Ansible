@@ -1,3 +1,8 @@
+- name: "synchronize backend files"
+  synchronize:
+    src: ../../backend
+    dest: /home/ubuntu
+    recursive: true
 - name: "build package"
   shell: |
     cd /home/ubuntu/backend
