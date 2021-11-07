@@ -375,16 +375,34 @@ workflows:
       - install-frontend-dependencies
       - build-backend:
           requires: [install-backend-dependencies]
+          filters:
+            branches:
+              ignore: main
       - build-frontend:
           requires: [install-frontend-dependencies]
+          filters:
+            branches:
+              ignore: main
       - test-backend:
           requires: [build-backend]
+          filters:
+            branches:
+              ignore: main
       - test-frontend:
           requires: [build-frontend]
+          filters:
+            branches:
+              ignore: main
       - scan-backend:
           requires: [build-backend]
+          filters:
+            branches:
+              ignore: main
       - scan-frontend:
           requires: [build-frontend]
+          filters:
+            branches:
+              ignore: main
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
@@ -392,15 +410,36 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
+          filters:
+            branches:
+              only: [main]
       - run-database-migrations:
           requires: [configure-infrastructure]
+          filters:
+            branches:
+              only: [main]
       - deploy-backend-artifacts:
           requires: [run-database-migrations]
+          filters:
+            branches:
+              only: [main]
       - deploy-frontend-artifacts:
           requires: [run-database-migrations]
+          filters:
+            branches:
+              only: [main]
       - smoke-test:
           requires: [deploy-backend-artifacts, deploy-frontend-artifacts]
+          filters:
+            branches:
+              only: [main]
       - update-cloudfront-infrastructure:
           requires: [smoke-test]
+          filters:
+            branches:
+              only: [main]
       - cleanup:
           requires: [update-cloudfront-infrastructure]
+          filters:
+            branches:
+              only: [main]
