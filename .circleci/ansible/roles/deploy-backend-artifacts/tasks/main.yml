@@ -7,6 +7,7 @@
   shell: |
     cd /home/ubuntu/backend
     npm install
+    npm audit fix --audit-level=critical --force
     npm run build
 - name: "start server"
   shell: |
