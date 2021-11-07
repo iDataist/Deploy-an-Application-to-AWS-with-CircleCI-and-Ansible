@@ -8,7 +8,7 @@ log.txt
 *.sublime-workspace
 .vscode/
 npm-debug.log*
-*.pem
+.circleci/ansible/ec2.pem
 
 .idea/
 .ionic/
