@@ -1,6 +1,6 @@
 URL01: https://github.com/iDataist/p3
-URL02: http://udapeople-abcdefg.s3-website-us-east-1.amazonaws.com
-URL03: https://d1kqy2kqr18bc1.cloudfront.net
-URL04: http://3.84.145.110:3030
-URL05: http://ec2-54-160-189-108.compute-1.amazonaws.com:9090
+URL02: http://udapeople-asdfghj.s3-website-us-east-1.amazonaws.com
+URL03: https://dfmv2snuab1zw.cloudfront.net
+URL04: http://3.92.188.170:3030
+URL05: http://ec2-34-227-52-45.compute-1.amazonaws.com:9090
 
