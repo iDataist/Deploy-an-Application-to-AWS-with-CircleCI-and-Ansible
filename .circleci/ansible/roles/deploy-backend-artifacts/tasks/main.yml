@@ -10,5 +10,5 @@
     npm run build
 - name: "start server"
   shell: |
-    cd /home/ubuntu/backend
-    pm2 start npm -- run "start:dev"
+    cd /home/ubuntu/backend/dist
+    pm2 start -f ./main.js
