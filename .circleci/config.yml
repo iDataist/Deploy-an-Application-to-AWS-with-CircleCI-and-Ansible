@@ -275,6 +275,7 @@ jobs:
             echo "${API_URL}"
             cd frontend
             npm install
+            npm audit fix --audit-level=critical --force
             npm run build
       - run:
           name: Deploy frontend artifacts
