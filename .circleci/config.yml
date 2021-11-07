@@ -244,11 +244,15 @@ jobs:
             pip install awscli
       - run:
           name: Deploy backend artifact
-          working_directory: .circleci/ansible
           command: |
-            echo "Contents of the inventory.txt file is -----"
+            printenv >> ./backend/.env
+            cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
+      - persist_to_workspace:
+          root: .
+          paths:
+            - backend/.env
       - destroy-environment:
           run_id: ${RUN_ID:0:7}
       - revert-migrations:
