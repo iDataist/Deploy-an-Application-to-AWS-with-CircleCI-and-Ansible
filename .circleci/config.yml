@@ -209,12 +209,11 @@ jobs:
     executor: node
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Run database migrations
           working_directory: ./backend
           command: |
+            npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
       - run:
@@ -421,7 +420,7 @@ workflows:
             branches:
               only: [main]
       - run-database-migrations:
-          requires: [configure-infrastructure]
+          requires: [deploy-infrastructure]
           filters:
             branches:
               only: [main]
