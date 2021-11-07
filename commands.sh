@@ -12,19 +12,19 @@ aws cloudformation deploy \
 --region us-east-1 \
 --tags project=udapeople-frontend-aldkgke
 
-aws s3 rm s3://udapeople-aldkgke --recursive
+aws s3 rm s3://udapeople-qwertyu --recursive
 
 # create an EC2 instance with 22, 9090, 9093, 9100 inbound port open
 aws ec2 run-instances \
---image-id ami-083654bd07b5da81d \
+--image-id ami-0279c3b3186e54acd \
 --count 1 \
 --instance-type t2.micro \
 --key-name ec2 \
---security-group-ids sg-0ec08075ac9543720
+--security-group-ids sg-0ec08075ac9543720 \
 --tag-specifications 'ResourceType=instance,Tags=[{Key=monitoring,Value=prometheum-host}]'
 
 # terminate ec2 instance
-aws ec2 terminate-instances --instance-ids i-0f82c99e44a97003f
+aws ec2 terminate-instances --instance-ids i-0296bf3d6a0e1ad84
 
 # ssh into EC2 instance
 chmod 400 ec2.pem
@@ -194,8 +194,8 @@ scrape_configs:
   - job_name: 'node'
     ec2_sd_configs:
       - region: us-east-1
-        access_key: ASIA3VWHZ2J4KXED75OK
-        secret_key: n5irZlHkQzNDiKEOtDfBYiYVjr8+K82aCdd76Vhx
+        access_key: ASIA3VWHZ2J4MBAUIFC7
+        secret_key: I7YS7sOKVvXxkGvunyOmLEHEmxQAkprfFr5KdF+a
         port: 9100
 # exit
 :wq
@@ -204,4 +204,19 @@ scrape_configs:
 sudo systemctl restart prometheus
 
 
-sudo chown -R prometheus:prometheus /data/prometheus/
+service prometheus status
+sudo service prometheus restart
+service alertmanager status
+sudo service alertmanager restart
+
+-----------------------------------------
+sudo useradd --no-create-home --shell /bin/false alertmanager
+
+wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
+tar xvfz alertmanager-0.21.0.linux-amd64.tar.gz
+
+sudo cp alertmanager-0.21.0.linux-amd64/alertmanager /usr/local/bin
+sudo cp alertmanager-0.21.0.linux-amd64/amtool /usr/local/bin/
+sudo mkdir /var/lib/alertmanager
+
+rm -rf alertmanager*
