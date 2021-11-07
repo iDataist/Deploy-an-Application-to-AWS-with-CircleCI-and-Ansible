@@ -216,7 +216,7 @@ jobs:
           working_directory: ./backend
           command: |
             npm run migrations > migrations_dump.txt
-            echo migrations_dump.txt
+            cat migrations_dump.txt
       - run:
           name: Send migration results to memstash
           working_directory: ./backend
@@ -239,13 +239,13 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible nodejs npm curl rsync openssh openssh-client
-            apk add --upgrade bash
+            apk add --update ansible openssh-client
             pip install awscli
       - run:
           name: Deploy backend artifact
           command: |
             printenv >> ./backend/.env
+            cat .env
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend-artifacts.yml
@@ -274,7 +274,9 @@ jobs:
           command: |
             export API_URL=`cat .circleci/ansible/backend-url.txt`
             echo "${API_URL}"
-            npm run build --prefix frontend
+            cd frontend
+            npm install
+            npm run build
       - run:
           name: Deploy frontend artifacts
           command: |
@@ -372,8 +374,14 @@ workflows:
   default:
     jobs:
       - install-backend-dependencies
+          filters:
+            branches:
+              ignore: main
       - install-frontend-dependencies
       - build-backend:
+          filters:
+            branches:
+              ignore: main
           requires: [install-backend-dependencies]
           filters:
             branches:
@@ -404,7 +412,6 @@ workflows:
             branches:
               ignore: main
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [main]
