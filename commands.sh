@@ -97,9 +97,27 @@ sudo chown -R prometheus:prometheus /var/lib/prometheus
 sudo systemctl daemon-reload
 sudo systemctl enable prometheus
 
+# Edit /etc/prometheus/prometheus.yml file
+sudo vim /etc/prometheus/prometheus.yml
+# paste the following content
+global:
+  scrape_interval: 15s
+  external_labels:
+    monitor: 'prometheus'
+scrape_configs:
+  - job_name: 'node_exporter'
+    static_configs:
+     # DNS of the node exporter
+      - targets: ['ec2-54-208-192-147.compute-1.amazonaws.com:9100']
+# exit
+:wq
+
+sudo systemctl restart prometheus
+
 service prometheus status
 sudo service prometheus restart
 
+-------------------------------------------------------------------------------
 # install Alertmanager
 wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
 tar xvfz alertmanager-0.21.0.linux-amd64.tar.gz
