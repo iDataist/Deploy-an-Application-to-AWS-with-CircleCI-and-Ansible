@@ -24,7 +24,7 @@ aws ec2 run-instances \
 --tag-specifications 'ResourceType=instance,Tags=[{Key=monitoring,Value=prometheum-host}]'
 
 # terminate ec2 instance
-aws ec2 terminate-instances --instance-ids i-0e85ca0e6c5ce9ec5
+aws ec2 terminate-instances --instance-ids i-0f82c99e44a97003f
 
 # ssh into EC2 instance
 chmod 400 ec2.pem
