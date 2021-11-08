@@ -16,7 +16,7 @@ I deployed an app to AWS with CircleCI and Ansible. Below are the main goals of 
 - [Ansible](https://www.ansible.com/) - Configuration management tool
 - [Prometheus](https://prometheus.io/) - Monitoring tool
 
-# Project Steps
+## Project Steps
 1. Setup - AWS
 - Create and download a new key pair in AWS EC2. Name this key pair "ec2" so that it works with the Cloud Formation templates.
 
