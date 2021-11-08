@@ -125,17 +125,15 @@ scrape_configs:
 :wq
 
 sudo systemctl restart prometheus
-
 service prometheus status
 sudo service prometheus restart
-
-service node-exporter status
-sudo service node-exporter restart
 
 sudo systemctl daemon-reload
 sudo systemctl enable node-exporter
 sudo systemctl start node-exporter
 sudo systemctl status node-exporter
+service node-exporter status
+sudo service node-exporter restart
 -------------------------------------------------------------------------------
 # install Alertmanager
 wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
