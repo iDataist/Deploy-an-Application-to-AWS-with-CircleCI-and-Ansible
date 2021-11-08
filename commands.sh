@@ -262,3 +262,4 @@ sudo service alertmanager restart
 
 -------------------------------------------------------------------------------
 journalctl -u prometheus
+journalctl -xun prometheus | less
