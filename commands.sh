@@ -1,20 +1,5 @@
-aws cloudformation deploy \
-         --template-file cloudfront.yml \
-         --stack-name udapeople-cloudfront--aldkgke\
-         --parameter-overrides WorkflowID=udapeople-aldkgke
-
-curl http://3.89.219.6:3030/api/status
-
-aws cloudformation deploy \
---template-file frontend.yml \
---stack-name udapeople-frontend-aldkgke \
---parameter-overrides ID=aldkgke \
---region us-east-1 \
---tags project=udapeople-frontend-aldkgke
-
-aws s3 rm s3://udapeople-asdfghj --recursive
-
 # create an EC2 instance with 22, 9090, 9093, 9100 inbound port open
+# this is the prometheus host
 aws ec2 run-instances \
 --image-id ami-0279c3b3186e54acd \
 --count 1 \
@@ -25,17 +10,14 @@ aws ec2 run-instances \
 
 # terminate ec2 instance
 aws ec2 terminate-instances --instance-ids i-02c89181b3a5a7f34
-
-# ssh into EC2 instance
-chmod 400 ec2.pem
-ssh -i "ec2.pem" ubuntu@ec2-54-165-172-173.compute-1.amazonaws.com
-
+-------------------------------------------------------------------------------
+# SSH into the prometheus host
 # create a different user than root to run specific services
 sudo useradd --no-create-home prometheus
 sudo mkdir /etc/prometheus
 sudo mkdir /var/lib/prometheus
 
-# install Prometheus
+# install prometheus
 wget https://github.com/prometheus/prometheus/releases/download/v2.19.0/prometheus-2.19.0.linux-amd64.tar.gz
 tar xvfz prometheus-2.19.0.linux-amd64.tar.gz
 
@@ -47,7 +29,7 @@ sudo cp -r prometheus-2.19.0.linux-amd64/console_libraries /etc/prometheus
 sudo cp prometheus-2.19.0.linux-amd64/promtool /usr/local/bin/
 rm -rf prometheus-2.19.0.linux-amd64.tar.gz prometheus-2.19.0.linux-amd64
 
-# configure Prometheus to monitor itself
+# configure prometheus to monitor itself
 sudo vim /etc/prometheus/prometheus.yml
 # paste the following content
 global:
@@ -62,7 +44,7 @@ scrape_configs:
 # exit
 :wq
 
-# allow Prometheus to be available as a service
+# allow prometheus to be available as a service
 sudo vim /etc/systemd/system/prometheus.service
 # paste the following content
 [Unit]
@@ -127,15 +109,17 @@ scrape_configs:
 sudo systemctl restart prometheus
 service prometheus status
 sudo service prometheus restart
-
-sudo systemctl daemon-reload
-sudo systemctl enable node-exporter
-sudo systemctl start node-exporter
-sudo systemctl status node-exporter
-service node-exporter status
-sudo service node-exporter restart
 -------------------------------------------------------------------------------
-# install Alertmanager
+# for node-exporter EC2 instance (backend EC2), node_exporter was installed by ansible.
+# sudo systemctl daemon-reload
+# sudo systemctl enable node_exporter
+# sudo systemctl start node_exporter
+# sudo systemctl status node_exporter
+
+service node_exporter status
+sudo service node_exporter restart
+-------------------------------------------------------------------------------
+# install Alertmanager to prometheus host
 wget https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
 tar xvfz alertmanager-0.21.0.linux-amd64.tar.gz
 
@@ -204,10 +188,10 @@ groups:
 # exit
 :wq
 
-# Configure Prometheus
+# Configure prometheus
 sudo chown -R prometheus:prometheus /etc/prometheus
 
-# Update Prometheus configuration file
+# Update prometheus configuration file
 sudo vim /etc/prometheus/prometheus.yml
 #delete all lines
 :1,$d
@@ -259,5 +243,6 @@ service alertmanager status
 sudo service alertmanager restart
 
 -------------------------------------------------------------------------------
+# obtain log
 journalctl -u prometheus
 journalctl -xu prometheus | less
