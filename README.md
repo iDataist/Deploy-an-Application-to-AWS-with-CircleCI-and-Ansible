@@ -64,7 +64,7 @@ I deployed an app to AWS with CircleCI and Ansible. Below are the main goals of 
 ![](screenshots/SCREENSHOT10.png)
 4. When a change has been pushed to GitHub main branch, it will trigger the pipeline and deploy the backend and frontend of the app to aws.
 ![](screenshots/main.png)
-5. The app allows you to add new employees.The frontend URL can be obtained through CloudFront. The backend URL can be seen through EC2.
+5. The app allows you to add new employees. The frontend URL can be obtained through CloudFront. The backend URL can be seen through EC2.
 ![](screenshots/URL02.png)
 ![](screenshots/URL04.png)
 ![](screenshots/URL03.png)
