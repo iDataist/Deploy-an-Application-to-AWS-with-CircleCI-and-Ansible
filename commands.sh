@@ -261,3 +261,4 @@ service alertmanager status
 sudo service alertmanager restart
 
 -------------------------------------------------------------------------------
+journalctl -u prometheus
