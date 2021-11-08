@@ -12,7 +12,7 @@ aws cloudformation deploy \
 --region us-east-1 \
 --tags project=udapeople-frontend-aldkgke
 
-aws s3 rm s3://udapeople-qwertyu --recursive
+aws s3 rm s3://udapeople-asdfghj --recursive
 
 # create an EC2 instance with 22, 9090, 9093, 9100 inbound port open
 aws ec2 run-instances \
@@ -24,7 +24,7 @@ aws ec2 run-instances \
 --tag-specifications 'ResourceType=instance,Tags=[{Key=monitoring,Value=prometheum-host}]'
 
 # terminate ec2 instance
-aws ec2 terminate-instances --instance-ids i-0296bf3d6a0e1ad84
+aws ec2 terminate-instances --instance-ids i-0ea26154ec8defd23
 
 # ssh into EC2 instance
 chmod 400 ec2.pem
@@ -108,7 +108,7 @@ scrape_configs:
   - job_name: 'node_exporter'
     static_configs:
      # DNS of the node exporter
-      - targets: ['localhost:9090', 'ec2-3-92-188-170.compute-1.amazonaws.com:9100']
+      - targets: ['localhost:9090', 'ec2-34-227-56-180.compute-1.amazonaws.com:9100']
 # auto discovery
 global:
   scrape_interval: 1s
@@ -248,17 +248,16 @@ alerting:
 scrape_configs:
   - job_name: 'node_exporter'
     static_configs:
-      - targets: ['ec2-54-208-192-147.compute-1.amazonaws.com:9100']
+      - targets: ['localhost:9090','ec2-34-227-56-180.compute-1.amazonaws.com:9100']
 # exit
 :wq
 
 # Reload Systemd
 sudo systemctl restart prometheus
-
-
 service prometheus status
 sudo service prometheus restart
 
 service alertmanager status
 sudo service alertmanager restart
+
 -------------------------------------------------------------------------------
