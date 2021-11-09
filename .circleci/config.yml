@@ -202,8 +202,6 @@ jobs:
           name: Configure server
           command: |
             cd .circleci/ansible
-            pwd
-            ls -la
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           run_id: ${RUN_ID:0:7}
