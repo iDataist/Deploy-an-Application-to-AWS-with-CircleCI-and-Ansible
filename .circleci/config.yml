@@ -200,9 +200,11 @@ jobs:
             ansible --version
       - run:
           name: Configure server
-          working_directory: ./.circleci/ansible
           command: |
-             ansible-playbook -i inventory.txt configure-server.yml
+            cd .circleci/ansible
+            pwd
+            ls -la
+            ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           run_id: ${RUN_ID:0:7}
   run-database-migrations:
